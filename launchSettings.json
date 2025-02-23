@@ -1,0 +1,13 @@
+{
+    "profiles": {
+        "Docker Compose": {
+            "commandName": "DockerCompose",
+            "commandVersion": "1.0",
+            "serviceActions": {
+                "gicbankingsystem.core.api": "StartDebugging",
+                "gicbankingsystem.core.api.tests": "StartDebugging",
+                "gicbankingsystem.console": "StartDebugging"
+            }
+        }
+    }
+}

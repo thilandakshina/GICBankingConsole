@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "src\\Services\\Core\\GICBankingSystem.Core.API\\GICBankingSystem.Core.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\ConsoleApp\\GICBankingSystem.Console\\GICBankingSystem.Console.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

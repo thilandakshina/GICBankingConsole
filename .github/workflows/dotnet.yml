@@ -1,0 +1,119 @@
+name: Backend CI/CD Pipeline
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0  # Important for SonarCloud analysis
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: 17
+        distribution: 'zulu'
+
+    - name: Install SonarCloud scanner
+      run: |
+        dotnet tool install --global dotnet-sonarscanner
+        dotnet tool install --global dotnet-coverage
+        
+    - name: Begin SonarCloud analysis
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        dotnet sonarscanner begin \
+        /k:"thilandakshina_GICBankingConsole" \
+        /o:"thilandakshina-1" \
+        /d:sonar.token="${{ secrets.SONAR_TOKEN }}" \
+        /d:sonar.host.url="https://sonarcloud.io" \
+        /d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx" \
+        /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" \
+        /d:sonar.coverage.exclusions="**Test*.cs,**/Program.cs" \
+        /d:sonar.sourceEncoding="UTF-8" \
+        /d:sonar.exclusions="**/GICBankingSystem.Core.Domain/**/*,**/GICBankingSystem.Core.Infrastructure/**/*,**/GICBankingSystem.Shared/**/*" \
+        /d:sonar.cpd.exclusions="**/GICBankingSystem.Core.Domain/**/*,**/GICBankingSystem.Core.Infrastructure/**/*,**/GICBankingSystem.Shared/**/*"
+        
+    - name: Restore dependencies
+      run: dotnet restore "./src/Services/Core/GICBankingSystem.Core.API/GICBankingSystem.Core.API.csproj"
+      
+    - name: Build
+      run: dotnet build "./src/Services/Core/GICBankingSystem.Core.API/GICBankingSystem.Core.API.csproj" --no-restore --configuration Release
+      
+    - name: Run API Tests
+      run: |
+        dotnet test "./src/Test/GICBankingSystem.Core.API.Tests/GICBankingSystem.Core.API.Tests.csproj" \
+        --configuration Release \
+        --collect:"XPlat Code Coverage;Format=opencover" \
+        --logger trx \
+        --results-directory TestResults
+      
+    - name: Run Application Tests
+      run: |
+        dotnet test "./src/Test/GICBankingSystem.Core.Application.Tests/GICBankingSystem.Core.Application.Tests.csproj" \
+        --configuration Release \
+        --collect:"XPlat Code Coverage;Format=opencover" \
+        --logger trx \
+        --results-directory TestResults
+
+    - name: End SonarCloud analysis
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: dotnet sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-results
+        path: TestResults
+      
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+        
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+        
+    - name: Build and push API image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./src/Services/Core/GICBankingSystem.Core.API/Dockerfile
+        push: true
+        tags: |
+          ${{ secrets.DOCKERHUB_USERNAME }}/gicbankingsystem-api:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/gicbankingsystem-api:${{ github.sha }}
+
+    - name: Build and push Console image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./src/ConsoleApp/GICBankingSystem.Console/Dockerfile
+        push: true
+        tags: |
+          ${{ secrets.DOCKERHUB_USERNAME }}/gicbankingsystem-console:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/gicbankingsystem-console:${{ github.sha }}

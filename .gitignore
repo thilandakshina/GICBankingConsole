@@ -1,0 +1,27 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/src/Libraries/GICBankingSystem.Shared/bin/Debug/net8.0
+/src/Libraries/GICBankingSystem.Shared/obj
+/src/Services/Interest/GICBankingSystem.Interest.Grpc/bin/Debug/net8.0
+/src/Services/Interest/GICBankingSystem.Interest.Grpc/obj
+/src/Services/Core/GICBankingSystem.Core.API/bin/Debug/net8.0
+/src/Services/Core/GICBankingSystem.Core.API/obj
+/src/Services/Core/GICBankingSystem.Core.Application/bin/Debug/net8.0
+/src/Services/Core/GICBankingSystem.Core.Application/obj
+/src/Services/Core/GICBankingSystem.Core.Domain/bin/Debug/net8.0
+/src/Services/Core/GICBankingSystem.Core.Domain/obj
+/src/Services/Core/GICBankingSystem.Core.Infrastructure/bin/Debug/net8.0
+/src/Services/Core/GICBankingSystem.Core.Infrastructure/obj
+/src/ConsoleApp/GICBankingSystem.Console/bin/Debug/net8.0
+/src/ConsoleApp/GICBankingSystem.Console/obj
+/src/Test/GICBankingSystem.Core.API.Tests/bin/Debug/net8.0
+/src/Test/GICBankingSystem.Core.API.Tests/obj
+/src/Test/GICBankingSystem.Core.Application.Tests/obj
+/src/Test/GICBankingSystem.Core.Application.Tests/bin/Debug/net8.0
+/obj
+/src/Test/GICBankingSystem.Core.API.Tests/bin/Release/net8.0
+/bin/Debug
+/src/Test/GICBankingSystem.Core.Application.Tests/bin/Release/net8.0/CoverletSourceRootsMapping_GICBankingSystem.Core.Application.Tests

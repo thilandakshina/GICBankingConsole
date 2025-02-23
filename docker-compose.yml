@@ -1,0 +1,20 @@
+services:
+  gicbankingsystem.core.api.tests:
+    image: ${DOCKER_REGISTRY-}gicbankingsystemcoreapitests
+    build:
+      context: .
+      dockerfile: src/Test/GICBankingSystem.Core.API.Tests/Dockerfile
+
+  gicbankingsystem.core.api:
+    image: ${DOCKER_REGISTRY-}gicbankingsystemcoreapi
+    build:
+      context: .
+      dockerfile: src/Services/Core/GICBankingSystem.Core.API/Dockerfile
+
+
+  gicbankingsystem.console:
+    image: ${DOCKER_REGISTRY-}gicbankingsystemconsole
+    build:
+      context: .
+      dockerfile: src/ConsoleApp/GICBankingSystem.Console/Dockerfile
+
