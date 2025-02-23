@@ -110,7 +110,7 @@ The project includes comprehensive unit tests using NUnit framework with Moq for
 ## Code Quality
 
 The project is integrated with SonarCloud for continuous code quality monitoring. You can view the detailed analysis at:
-[https://sonarcloud.io/summary/overall?id=thilandakshina_GICBankingSystem](https://sonarcloud.io/summary/overall?id=thilandakshina_GICBankingSystem)
+[https://sonarcloud.io/summary/overall?id=thilandakshina_GICBankingSystem](https://sonarcloud.io/summary/overall?id=thilandakshina_GICBankingConsole)
 
 ## CI/CD
 
